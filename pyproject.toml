@@ -1,0 +1,93 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "turtlebot3-acmpc"
+version = { attr = "acmpc.__version__.__version__" }
+dynamic = ["version"]
+description = "AC-MPC for TurtleBot3 Navigation"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Dudyrev Gleb"}
+]
+keywords = ["robotics", "reinforcement-learning", "mpc", "navigation", "turtlebot3"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "torch>=2.0.0",
+    "gymnasium>=0.29.0",
+    "casadi>=3.6.0",
+    "osqp>=0.6.0",
+    "omegaconf>=2.3.0",
+    "pydantic>=2.0.0",
+    "tyro>=0.8.0",
+    "rich>=13.0.0",
+    "numpy>=1.24.0",
+    "tensorboard>=2.14.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.23.0",
+    "black>=24.1.0",
+    "ruff>=0.2.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+    "bump-my-version>=3.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/GlebDudyrev/turtlebot3_acmpc"
+Repository = "https://github.com/GlebDudyrev/turtlebot3_acmpc"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ["py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+select = ["E", "F", "W", "I", "UP", "N"]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+
+[tool.bumpversion]
+current_version = "0.1.0"
+
+[tool.bumpversion.vcs]
+commit = true
+tag = true
+
+[[tool.bumpversion.files]]
+filename = "version.sh"
+
+[[tool.bumpversion.files]]
+filename = "src/acmpc/__version__.py"
