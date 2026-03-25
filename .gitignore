@@ -56,8 +56,14 @@ log/
 # Development info (planning, specs)
 dev_info/
 
+# Next tasks / planning
+next_tasks/
+
 # Testing
 .pytest_cache/
+
+# Todo
+todo/
 .coverage
 htmlcov/
 .tox/
