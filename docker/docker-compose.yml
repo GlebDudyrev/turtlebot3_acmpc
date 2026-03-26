@@ -1,0 +1,45 @@
+services:
+  acmpc_gazebo:
+    # Сборка из Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # Имя контейнера
+    container_name: acmpc_gazebo
+    
+    # Перезапуск при любом завершении кроме ручного
+    restart: unless-stopped
+    
+    # Сетевой режим
+    network_mode: bridge
+    
+    # Порты для проброса
+    # 9090 - rosbridge WebSocket (для связи с Python на хосте)
+    # 6080 - gzweb (для просмотра симуляции в браузере)
+    ports:
+      - "9090:9090"
+      - "6080:6080"
+    
+    # Переменные окружения
+    environment:
+      - ROS_DOMAIN_ID=42
+      - TURTLEBOT3_MODEL=burger
+      - ENABLE_GUI=true
+      - WORLD_NAME=turtlebot3_empty
+    
+    # Тома (подключение директорий)
+    # configs/worlds -> /home/ubuntu/worlds (для пользовательских миров)
+    volumes:
+      - ../configs/worlds:/home/ubuntu/worlds:ro
+    
+    # Точка входа (скрипт запуска)
+    entrypoint: /entrypoint.sh
+    
+    # Проверка готовности сервиса
+    # Проверяет, что rosbridge отвечает на порту 9090
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
