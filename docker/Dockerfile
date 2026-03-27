@@ -1,7 +1,7 @@
 # =============================================================================
 # TurtleBot3 AC-MPC Docker Environment
 # =============================================================================
-# Базовый образ: ROS 2 Humble без GUI (минимальный)
+# Базовый образ: ROS 2 Humble без GUI
 # Используем ros-base для уменьшения размера образа
 # =============================================================================
 FROM ros:humble-ros-base-jammy
@@ -13,10 +13,6 @@ SHELL ["/bin/bash", "-c"]
 
 # =============================================================================
 # Установка системных зависимостей
-# =============================================================================
-# - lsb-release: определение версии Ubuntu
-# - wget, curl: скачивание файлов
-# - gnupg, ca-certificates: работа с GPG ключами и HTTPS
 # =============================================================================
 RUN apt-get update && apt-get install -y \
     lsb-release \
@@ -30,66 +26,40 @@ RUN apt-get update && apt-get install -y \
 # =============================================================================
 # Настройка локали
 # =============================================================================
-# ROS 2 требует UTF-8 локаль для корректной работы
-# =============================================================================
 RUN locale-gen en_US en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
 # =============================================================================
-# Добавление репозитория Gazebo Classic
+# Установка ROS-пакетов для Gazebo Fortress
 # =============================================================================
-# Gazebo Classic 11 не включён в официальные репозитории Ubuntu 22.04
-# Добавляем репозиторий osrfoundation.org с GPG ключом
-# =============================================================================
-RUN apt-get update && apt-get install -y \
-    gazebo \
-    libgazebo-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# =============================================================================
-# Установка Gazebo Classic 11
-# =============================================================================
-# - gazebo11: сам симулятор
-# - libgazebo11-dev: заголовочные файлы для разработки
-# =============================================================================
-RUN apt-get install -y \
-    gazebo \
-    libgazebo-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# =============================================================================
-# Установка ROS-пакетов
-# =============================================================================
-# ROS-Gazebo мост:
-# - ros-humble-ros-ign-bridge: мост между ROS2 и Gazebo Classic
-# 
-# rosbridge (WebSocket интерфейс для внешних подключений):
-# - ros-humble-rosbridge-server: WebSocket сервер
-# - ros-humble-rosbridge-library: Python библиотека для клиента
-# - ros-humble-rosbridge-msgs: типы сообщений rosbridge
-# - ros-humble-rosapi: сервисы для мета-информации (список топиков и т.д.)
-# 
-# Типы сообщений:
-# - ros-humble-geometry-msgs: geometry_msgs (Twist для /cmd_vel)
-# - ros-humble-nav-msgs: nav_msgs (Odometry для /odom)
-# - ros-humble-sensor-msgs: sensor_msgs (LaserScan для /scan)
-# 
+# ros-gz: интеграция ROS2 с Gazebo Fortress (новый Gazebo/Ignition)
+# - ros-humble-ros-gz: основной пакет (gz_sim, плагины)
+# - ros-humble-ros-gz-bridge: мост ROS2 ↔ Gazebo (запускается автоматически)
+# - ros-humble-ros-gz-sim: запуск симулятора
+#
 # TurtleBot3:
+# - ros-humble-turtlebot3-gazebo: миры и плагины для Gazebo Fortress
 # - ros-humble-turtlebot3-description: URDF/XACRO модели роботов
-# - ros-humble-turtlebot3-gazebo: миры и плагины для Gazebo
+#
+# foxglove-bridge:
+# - ros-humble-foxglove-bridge: WebSocket bridge для Python клиента
+#
+# Типы сообщений:
+# - ros-humble-geometry-msgs: Twist для /cmd_vel
+# - ros-humble-nav-msgs: Odometry для /odom
+# - ros-humble-sensor-msgs: LaserScan для /scan
 # =============================================================================
 RUN apt-get update && apt-get install -y \
-    ros-humble-ros-ign-bridge \
-    ros-humble-rosbridge-server \
-    ros-humble-rosbridge-library \
-    ros-humble-rosbridge-msgs \
-    ros-humble-rosapi \
+    ros-humble-ros-gz \
+    ros-humble-ros-gz-bridge \
+    ros-humble-ros-gz-sim \
+    ros-humble-turtlebot3-gazebo \
+    ros-humble-turtlebot3-description \
+    ros-humble-rosbridge-suite \
     ros-humble-geometry-msgs \
     ros-humble-nav-msgs \
     ros-humble-sensor-msgs \
-    ros-humble-turtlebot3-description \
-    ros-humble-turtlebot3-gazebo \
     && rm -rf /var/lib/apt/lists/*
 
 # =============================================================================
@@ -100,16 +70,13 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /workspace
 
 # =============================================================================
-# Копирование и настройка entrypoint скрипта
+# Копирование launch файлов и entrypoint скрипта
 # =============================================================================
-# entrypoint.sh запускает все сервисы при старте контейнера
-# =============================================================================
+COPY launch/ /workspace/launch/
 COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # =============================================================================
 # Точка входа
-# =============================================================================
-# При запуске контейнера выполняется entrypoint.sh
 # =============================================================================
 ENTRYPOINT ["/entrypoint.sh"]
