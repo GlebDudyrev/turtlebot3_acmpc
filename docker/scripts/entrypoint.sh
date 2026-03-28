@@ -1,14 +1,3 @@
-#!/bin/bash
-# =============================================================================
-# Entrypoint for TurtleBot3 AC-MPC Docker container
-# =============================================================================
-# Запускает симуляцию TurtleBot3 в Gazebo Fortress:
-# - Gazebo Fortress (gzserver)
-# - TurtleBot3 robot spawn
-# - ros_gz_bridge (автоматически через turtlebot3_gazebo)
-# - rosbridge_server (WebSocket для Python на хосте)
-# =============================================================================
-
 set -e
 
 RED='\033[0;31m'
@@ -29,18 +18,20 @@ log_error() {
 }
 
 WORLD_NAME="${WORLD_NAME:-turtlebot3_empty}"
+TURTLEBOT3_MODEL="${TURTLEBOT3_MODEL:-burger}"
 
 log_info "Starting TurtleBot3 AC-MPC environment"
 log_info "World: ${WORLD_NAME}"
-log_info "Model: ${TURTLEBOT3_MODEL:-burger}"
+log_info "Model: ${TURTLEBOT3_MODEL}"
 
-# Source ROS2
 source /opt/ros/humble/setup.bash
 
-# Set TurtleBot3 model
-export TURTLEBOT3_MODEL="${TURTLEBOT3_MODEL:-burger}"
+export TURTLEBOT3_MODEL
 
-# Find world file
+export GAZEBO_MODEL_PATH=/opt/ros/humble/share/turtlebot3_gazebo/models:$GAZEBO_MODEL_PATH
+
+source /usr/share/gazebo/setup.sh
+
 find_world() {
     local world_name="$1"
     
@@ -64,46 +55,33 @@ WORLD_PATH=$(find_world "${WORLD_NAME}") || {
 
 log_info "World path: ${WORLD_PATH}"
 
-# =============================================================================
-# Start Gazebo simulation with TurtleBot3 (headless - no GUI)
-# =============================================================================
-# Используем headless launch файл (без gzclient)
-# Автоматически запускает:
-# - gzserver (Gazebo Fortress)
-# - spawn_turtlebot3.launch.py
-# - ros_gz_bridge for /scan, /odom, /cmd_vel, /tf, /imu
-# =============================================================================
-log_info "Starting Gazebo simulation with TurtleBot3 (headless)..."
-ros2 launch /workspace/launch/turtlebot3_headless.launch.py &
+log_info "Starting Gazebo simulation with TurtleBot3..."
+
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py \
+    world_file:="${WORLD_PATH}" \
+    model:="${TURTLEBOT3_MODEL}" \
+    use_sim_time:=true &
 GAZEBO_PID=$!
 
-# Wait for simulation to start
-sleep 5
+sleep 8
 
-# =============================================================================
-# Start rosbridge_server (WebSocket for Python on host)
-# =============================================================================
-# Port 9090 - rosbridge WebSocket
-# Allows Python code on host to connect without installing ROS2
-# =============================================================================
+if ! kill -0 $GAZEBO_PID 2>/dev/null; then
+    log_error "Gazebo failed to start"
+    exit 1
+fi
+
 log_info "Starting rosbridge_server on port 9090..."
 ros2 run rosbridge_server rosbridge_websocket.py &
 ROSBRIDGE_PID=$!
 
 sleep 2
 
-# =============================================================================
-# Info
-# =============================================================================
 log_info "All services started successfully!"
 log_info "rosbridge WebSocket: ws://localhost:9090"
-log_info "Gazebo Web: https://app.gazebosim.org → ws://localhost:9002"
-log_info "ROS2 topics: /scan, /odom, /cmd_vel, /tf, /imu"
+log_info "Gazebo: connect from host using GAZEBO_MASTER_URI=http://localhost:11345"
+log_info "ROS2 topics: /scan, /odom, /cmd_vel, /tf"
 log_info "Press Ctrl+C to stop"
 
-# =============================================================================
-# Wait for shutdown
-# =============================================================================
 cleanup() {
     log_info "Shutting down..."
     [[ -n "${ROSBRIDGE_PID}" ]] && kill ${ROSBRIDGE_PID} 2>/dev/null

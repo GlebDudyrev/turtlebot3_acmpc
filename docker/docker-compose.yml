@@ -8,11 +8,10 @@ services:
     
     restart: unless-stopped
     
-    network_mode: host
+    network_mode: bridge
     
     ports:
-      - "9090:9090"    # rosbridge WebSocket (для Python на хосте)
-      - "9002:9002"    # Gazebo WebSocket (для app.gazebosim.org)
+      - "9090:9090"    # rosbridge WebSocket
     
     environment:
       - ROS_DOMAIN_ID=42
