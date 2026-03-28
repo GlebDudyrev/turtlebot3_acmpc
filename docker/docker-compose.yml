@@ -8,10 +8,12 @@ services:
     
     restart: unless-stopped
     
-    network_mode: bridge
+    network_mode: host
     
-    ports:
-      - "9090:9090"    # rosbridge WebSocket
+    # If you want to use network_mode: bridge, you should include ports
+    # ports:
+    #   - "9090:9090"    # rosbridge WebSocket
+    #   - "11345:11345"  # Gazebo Master
     
     environment:
       - ROS_DOMAIN_ID=42
