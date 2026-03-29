@@ -4,8 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "turtlebot3-acmpc"
-version = { attr = "acmpc.__version__.__version__" }
-dynamic = ["version"]
+version = "0.2.0"
 description = "AC-MPC for TurtleBot3 Navigation"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -46,7 +45,7 @@ dev = [
     "ruff>=0.2.0",
     "mypy>=1.8.0",
     "pre-commit>=3.6.0",
-    "bump-my-version>=3.0.0",
+    "bump-my-version>=1.0.0",
 ]
 
 [project.urls]
@@ -79,15 +78,11 @@ python_files = ["test_*.py"]
 python_functions = ["test_*"]
 asyncio_mode = "auto"
 
-[tool.bumpversion]
-current_version = "0.1.0"
+[tool.bump-my-version]
+current_version = "0.2.0"
 
-[tool.bumpversion.vcs]
-commit = true
-tag = true
-
-[[tool.bumpversion.files]]
+[[tool.bump-my-version.files]]
 filename = "version.sh"
 
-[[tool.bumpversion.files]]
+[[tool.bump-my-version.files]]
 filename = "src/acmpc/__version__.py"

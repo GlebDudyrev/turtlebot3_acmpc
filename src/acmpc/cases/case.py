@@ -1,0 +1,37 @@
+from typing import Callable
+
+from pydantic import BaseModel, Field, model_validator
+
+from .configs import CaseConfig
+from ..registries.rewards import RewardRegistry
+from ..registries.robots import RobotParamsRegistry, RobotParams
+
+
+class Case(BaseModel):
+    """Training case - wrapper around CaseConfig with convenience methods."""
+
+    name: str = Field(description="Unique case identifier")
+    description: str = Field(default="", description="Human-readable description")
+    config: CaseConfig = Field(description="Case configuration")
+
+    model_config = {"arbitrary_types_allowed": True}
+
+    @model_validator(mode="after")
+    def validate_references(self) -> "Case":
+        if self.config.env.reward_fn not in RewardRegistry:
+            raise ValueError(
+                f"Reward '{self.config.env.reward_fn}' not found. "
+                f"Available: {RewardRegistry.list_available()}"
+            )
+        if self.config.env.robot_name not in RobotParamsRegistry:
+            raise ValueError(
+                f"Robot '{self.config.env.robot_name}' not found. "
+                f"Available: {RobotParamsRegistry.list_available()}"
+            )
+        return self
+
+    def get_reward_fn(self) -> Callable[..., float]:
+        return RewardRegistry.get(self.config.env.reward_fn)
+
+    def get_robot_params(self) -> RobotParams:
+        return RobotParamsRegistry.get(self.config.env.robot_name)
