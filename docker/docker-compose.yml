@@ -18,7 +18,7 @@ services:
     environment:
       - ROS_DOMAIN_ID=42
       - TURTLEBOT3_MODEL=burger
-      - WORLD_NAME=turtlebot3_empty
+      - WORLD_NAME=turtlebot3_dqn_stage2
     
     volumes:
       - ../configs/worlds:/workspace/worlds:ro
