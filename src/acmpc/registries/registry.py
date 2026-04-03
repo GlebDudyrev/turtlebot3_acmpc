@@ -10,8 +10,9 @@ class Registry(Generic[T]):
         self._name = name
         self._registry: dict[str, T] = {}
 
-    def register(self, name: str,  item: T | None = None) -> Callable[[T], T]:
+    def register(self, name: str, item: T | None = None) -> Callable[[T], T] | T:
         if item is None:
+
             def decorator(item: T) -> T:
                 if name in self._registry:
                     raise ValueError(f"{self._name} '{name}' already registered")

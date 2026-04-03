@@ -1,11 +1,11 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 import roslibpy
 
 
 class BaseTopic(ABC):
 
-    def __init__(self, ros: roslibpy.Ros, name: str, message_type:  str):
+    def __init__(self, ros: roslibpy.Ros, name: str, message_type: str):
         self.ros = ros
         self.name = name
         self.message_type = message_type

@@ -5,7 +5,7 @@ from .odom import OdomSubscriber
 from .scan import LaserScanSubscriber
 
 __all__ = [
-    'CmvVelPublisher',
-    'OdomSubscriber',
-    'LaserScanSubscriber',
+    "CmvVelPublisher",
+    "OdomSubscriber",
+    "LaserScanSubscriber",
 ]

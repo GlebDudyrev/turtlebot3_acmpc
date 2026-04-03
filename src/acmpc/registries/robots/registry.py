@@ -3,7 +3,6 @@
 from ..registry import Registry
 from .robot_params import RobotParams
 
-
 RobotParamsRegistry = Registry[RobotParams]("robot_params")
 
 

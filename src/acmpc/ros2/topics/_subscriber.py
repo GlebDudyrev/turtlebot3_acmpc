@@ -1,9 +1,11 @@
 import logging
-from typing import Callable, Any
 from abc import ABC, abstractmethod
-import roslibpy
-from ._base_topic import BaseTopic
+from collections.abc import Callable
+from typing import Any
 
+import roslibpy
+
+from ._base_topic import BaseTopic
 
 LOGGER = logging.getLogger(__name__)
 
@@ -15,13 +17,13 @@ class Subscriber(BaseTopic, ABC):
 
     def subscribe(self):
         self.topic.subscribe(self._handle_raw_message)
-        LOGGER.info('Subscriber ', self.name, 'is ready.')
+        LOGGER.info("Subscriber %s is ready.", self.name)
 
     def unsubscribe(self):
         self.topic.unsubscribe()
 
     def _handle_raw_message(self, message: roslibpy.Message):
-        LOGGER.debug('Subscriber', self.name, 'get message: ', message)
+        LOGGER.debug("Subscriber %s get message: %s", self.name, message)
         parsed = self._parse_message(message)
         self._handle(parsed)
 

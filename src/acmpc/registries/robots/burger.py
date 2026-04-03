@@ -2,9 +2,8 @@
 
 import numpy as np
 
-from .robot_params import RobotParams
 from .registry import RobotParamsRegistry
-
+from .robot_params import RobotParams
 
 burger = RobotParams(
     name="TurtleBot3 Burger",
