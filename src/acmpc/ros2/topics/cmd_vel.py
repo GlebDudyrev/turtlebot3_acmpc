@@ -1,10 +1,11 @@
 import roslibpy
 
+from ..client import RosBridgeClient
 from ._publisher import Publisher
 
 
 class CmvVelPublisher(Publisher):
-    def __init__(self, ros):
+    def __init__(self, ros: RosBridgeClient):
         super().__init__(ros, "/cmd_vel", "geometry_msgs/Twist")
 
     def _build_message(self, linear_vel: float, angular_vel: float):

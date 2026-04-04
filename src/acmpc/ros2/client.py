@@ -8,7 +8,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class RosBridgeClient:
-    def __init__(self, host: str, port: int):
+    def __init__(self, host: str = "localhost", port: int = 9090):
         self.host = host
         self.port = port
 
@@ -20,20 +20,20 @@ class RosBridgeClient:
     def _on_ready(self):
         LOGGER.info("Connected to ws://%s:%s", self.host, self.port)
 
-    def _on_close(self):
-        LOGGER.info("Connection closed")
+    def _on_close(self, reason):
+        LOGGER.info("Connection closed reason is %s", reason)
 
     def _on_error(self, error):
         LOGGER.error("Connection error: %s", error)
 
-    def connect(self):
-        if self.client.is_connected:
-            LOGGER.warning("Client already connected.")
-        elif self.client.is_connecting:
-            LOGGER.warning("Connection is already in pregress.")
-        else:
+    def run(self):
+        if self.client.is_connecting:
             LOGGER.info("Attempting connection to ws://%s:%s", self.host, self.port)
             self.client.run()
+        elif self.client.is_connected:
+            LOGGER.info("Client is already connected.")
+        else:
+            raise RuntimeError("Error running clients, it is not connecting.")
 
     def disconnect(self, terminate: bool = True):
         if not self.client.is_connected and not self.client.is_connecting:

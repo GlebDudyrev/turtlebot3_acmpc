@@ -1,6 +1,6 @@
 from ..case import Case
-from ..registry import CaseRegistryInstance
 from ..configs import CaseConfig, EnvConfig
+from ..registry import CaseRegistryInstance
 
 nav_obstacles = Case(
     name="nav_obstacles",

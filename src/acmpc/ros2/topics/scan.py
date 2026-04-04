@@ -3,11 +3,12 @@ from typing import Any
 
 import roslibpy
 
+from ..client import RosBridgeClient
 from ._subscriber import Subscriber
 
 
 class LaserScanSubscriber(Subscriber):
-    def __init__(self, ros: roslibpy.Ros, callback: Callable):
+    def __init__(self, ros: RosBridgeClient, callback: Callable):
         super().__init__(ros, "/scan", "sensor_msgs/LaserScan", callback)
 
     def _parse_message(self, message: roslibpy.Message) -> dict[str, Any]:

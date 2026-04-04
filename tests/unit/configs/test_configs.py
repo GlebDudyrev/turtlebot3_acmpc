@@ -354,7 +354,7 @@ class TestCase:
         )
         CaseRegistryInstance.register("test_reward_fn", test_case)
 
-        reward_fn = test_case.get_reward_fn()
+        reward_fn = test_case.reward_fn
         assert callable(reward_fn)
 
     def test_get_robot_params(self):
@@ -370,7 +370,7 @@ class TestCase:
         )
         CaseRegistryInstance.register("test_robot_params", test_case)
 
-        robot_params = test_case.get_robot_params()
+        robot_params = test_case.robot_params
         assert robot_params.name == "TurtleBot3 Burger"
 
     def test_case_registry_register(self):

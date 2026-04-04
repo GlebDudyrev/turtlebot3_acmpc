@@ -71,7 +71,7 @@ import roslibpy
 
 # Подключение к rosbridge
 ros = roslibpy.Ros(host='localhost', port=9090)
-ros.connect()
+ros.run()
 
 # Пример: подписаться на scan
 def on_scan(message):

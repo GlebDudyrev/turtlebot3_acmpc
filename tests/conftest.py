@@ -55,6 +55,11 @@ class MockRos:
     def is_connecting(self) -> bool:
         return self._is_connecting
 
+    @property
+    def client(self):
+        """Return self to mock RosBridgeClient behavior."""
+        return self
+
     def on(self, event: str, callback):
         self._callbacks[event] = callback
 

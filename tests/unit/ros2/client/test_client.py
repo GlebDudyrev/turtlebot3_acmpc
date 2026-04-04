@@ -14,16 +14,17 @@ class TestRosBridgeClient:
         assert client.host == "test_host"
         assert client.port == 9999
 
-    def test_connect(self):
-        """Test connect method calls run on roslibpy client."""
+    def test_run(self):
+        """Test run method calls run on roslibpy client."""
         mock_ros = MockRos()
+        mock_ros.run()
 
         client = RosBridgeClient.__new__(RosBridgeClient)
         client.host = "localhost"
         client.port = 9090
         client.client = mock_ros
 
-        client.connect()
+        client.run()
 
         assert mock_ros.is_connected is True
 

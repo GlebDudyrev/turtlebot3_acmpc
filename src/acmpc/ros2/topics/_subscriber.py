@@ -5,17 +5,27 @@ from typing import Any
 
 import roslibpy
 
+from ..client import RosBridgeClient
 from ._base_topic import BaseTopic
 
 LOGGER = logging.getLogger(__name__)
 
 
 class Subscriber(BaseTopic, ABC):
-    def __init__(self, ros, name, message_type, callback):
+    def __init__(
+        self,
+        ros: RosBridgeClient,
+        name: str,
+        message_type: str,
+        callback: Callable,
+    ):
         super().__init__(ros, name, message_type)
         self.callback: Callable = callback
 
     def subscribe(self):
+        if not self.ros.is_connected:
+            raise RuntimeError("Ros bridge is not connected.")
+
         self.topic.subscribe(self._handle_raw_message)
         LOGGER.info("Subscriber %s is ready.", self.name)
 
