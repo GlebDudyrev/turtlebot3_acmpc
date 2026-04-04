@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "turtlebot3-acmpc"
-version = "0.2.0"
+version = "0.3.0"
 description = "AC-MPC for TurtleBot3 Navigation"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -80,7 +80,7 @@ python_functions = ["test_*"]
 asyncio_mode = "auto"
 
 [tool.bump-my-version]
-current_version = "0.2.0"
+current_version = "0.3.0"
 
 [[tool.bump-my-version.files]]
 filename = "version.sh"

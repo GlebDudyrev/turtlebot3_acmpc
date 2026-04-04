@@ -30,4 +30,4 @@ def basic_reward(info: dict[str, Any]) -> float:
         return r_collision
 
     progress = prev_distance - distance_to_goal
-    return c_r * progress
+    return float(c_r * progress)

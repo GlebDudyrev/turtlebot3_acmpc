@@ -39,4 +39,4 @@ def advanced_reward(info: dict[str, Any]) -> float:
 
     penalty = c_p * (1.0 - heading_deviation)
 
-    return c_r * progress * exponential_term - penalty
+    return float(c_r * progress * exponential_term - penalty)

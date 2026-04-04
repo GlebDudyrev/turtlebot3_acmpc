@@ -2,4 +2,4 @@
 # Version file for turtlebot3_acmpc
 # This is the single source of truth for version management
 
-MY_VERSION="0.2.0"
+MY_VERSION="0.3.0"

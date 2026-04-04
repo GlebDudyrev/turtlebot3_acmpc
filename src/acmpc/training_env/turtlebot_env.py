@@ -241,10 +241,13 @@ class TurtleBotEnv(gym.Env):
         """Form observation from sensor data."""
         lidar_processed = self._process_lidar()
 
-        prev_vel = np.array(
-            [self._current_velocity[0], self._current_velocity[1]],
-            dtype=np.float32,
-        )
+        if self._current_velocity is not None:
+            prev_vel = np.array(
+                [self._current_velocity[0], self._current_velocity[1]],
+                dtype=np.float32,
+            )
+        else:
+            prev_vel = np.array([0, 0], dtype=np.float32)
 
         rho, phi, yaw = self._get_goal_info()
 
@@ -287,10 +290,10 @@ class TurtleBotEnv(gym.Env):
 
         return normalized
 
-    def _get_goal_info(self) -> tuple[float, float, float, float]:
+    def _get_goal_info(self) -> tuple[float, float, float]:
         """Get goal information in polar coordinates."""
         if self._current_position is None or self._goal_position is None:
-            return 0.0, 0.0, 0.0, 0.0
+            return 0.0, 0.0, 0.0
 
         dx = self._goal_position[0] - self._current_position[0]
         dy = self._goal_position[1] - self._current_position[1]
