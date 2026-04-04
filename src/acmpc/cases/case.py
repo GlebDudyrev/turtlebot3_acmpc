@@ -1,10 +1,10 @@
-from typing import Callable
+from collections.abc import Callable
 
 from pydantic import BaseModel, Field, model_validator
 
-from .configs import CaseConfig
 from ..registries.rewards import RewardRegistry
-from ..registries.robots import RobotParamsRegistry, RobotParams
+from ..registries.robots import RobotParams, RobotParamsRegistry
+from .configs import CaseConfig, EnvConfig
 
 
 class Case(BaseModel):
@@ -30,8 +30,14 @@ class Case(BaseModel):
             )
         return self
 
-    def get_reward_fn(self) -> Callable[..., float]:
+    @property
+    def reward_fn(self) -> Callable[..., float]:
         return RewardRegistry.get(self.config.env.reward_fn)
 
-    def get_robot_params(self) -> RobotParams:
+    @property
+    def robot_params(self) -> RobotParams:
         return RobotParamsRegistry.get(self.config.env.robot_name)
+
+    @property
+    def env_config(self) -> EnvConfig:
+        return self.config.env

@@ -1,5 +1,3 @@
-from collections.abc import Callable
-
 from ..registries.registry import Registry
 from .case import Case
 from .configs import CaseConfig

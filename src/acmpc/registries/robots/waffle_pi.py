@@ -2,9 +2,8 @@
 
 import numpy as np
 
-from .robot_params import RobotParams
 from .registry import RobotParamsRegistry
-
+from .robot_params import RobotParams
 
 waffle_pi = RobotParams(
     name="TurtleBot3 Waffle Pi",

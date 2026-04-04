@@ -15,8 +15,7 @@ class EnvConfig(BaseModel):
     """Configuration for training environment."""
 
     world_name: str = Field(
-        default="turtlebot3_empty",
-        description="Name of world (from configs/worlds)"
+        default="turtlebot3_empty", description="Name of world (from configs/worlds)"
     )
 
     robot_name: Literal["burger", "waffle", "waffle_pi"] = Field(
@@ -75,13 +74,11 @@ class EnvConfig(BaseModel):
                 f"Reward function '{value}' not found. " f"Available: {available}"
             )
         return value
-    
+
     @field_validator("robot_name")
     @classmethod
     def check_robot_name(cls, value: str) -> str:
         if value not in RobotParamsRegistry:
             available = RobotParamsRegistry.list_available()
-            raise ValueError(
-                f"Robot '{value}' not found. Available: {available}"
-            )
+            raise ValueError(f"Robot '{value}' not found. Available: {available}")
         return value

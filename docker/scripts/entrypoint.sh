@@ -59,7 +59,7 @@ log_info "World path: ${WORLD_PATH}"
 
 log_info "Starting Gazebo simulation with TurtleBot3..."
 
-ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py \
+ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage2.launch.py \
     world_file:="${WORLD_PATH}" \
     model:="${TURTLEBOT3_MODEL}" \
     use_sim_time:=true &
