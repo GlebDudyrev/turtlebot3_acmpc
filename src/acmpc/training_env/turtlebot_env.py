@@ -206,9 +206,7 @@ class TurtleBotEnv(gym.Env):
                 break
             time.sleep(0.01)
 
-    def step(
-        self, action: NDArray[np.float32]
-    ) -> tuple[
+    def step(self, action: NDArray[np.float32]) -> tuple[
         NDArray[np.float32],
         float,
         bool,
