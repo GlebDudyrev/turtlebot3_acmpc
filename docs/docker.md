@@ -2,9 +2,9 @@
 
 ## Требования
 
-- Docker
-- Ubuntu 22.04
-- Gazebo Classic 11
+- Docker и Docker Compose
+- Ubuntu 22.04 (рекомендуется)
+- Gazebo Classic 11 (для визуализации)
 
 ---
 
@@ -131,6 +131,16 @@ sudo lsof -i :11345
 sudo kill -9 <PID>
 ```
 
+### Порт 9090 занят (rosbridge)
+
+```bash
+# Найти процесс
+sudo lsof -i :9090
+
+# Убить процесс
+sudo kill -9 <PID>
+```
+
 ### Контейнер не запускается
 
 ```bash
@@ -139,4 +149,109 @@ docker-compose logs
 
 # Пересобрать
 docker-compose build --no-cache
+```
+
+### Ошибка "No route to host"
+
+Проблема с сетевым подключением. Попробуйте:
+
+```bash
+# Использовать network_mode: bridge в docker-compose.yml
+# Раскомментировать ports:
+#   - "9090:9090"
+#   - "11345:11345"
+```
+
+### Gazebo не запускается внутри контейнера
+
+```bash
+# Проверить что установлены все зависимости
+docker exec -it acmpc_gazebo ros2 pkg list | grep gazebo
+
+# Проверить переменные окружения
+docker exec -it acmpc_gazebo env | grep GAZEBO
+```
+
+---
+
+## Структура Docker
+
+### docker-compose.yml
+
+```yaml
+services:
+  acmpc_gazebo:
+    build: .
+    container_name: acmpc_gazebo
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - ROS_DOMAIN_ID=42
+      - TURTLEBOT3_MODEL=burger
+      - WORLD_NAME=turtlebot3_dqn_stage2
+    volumes:
+      - ../configs/worlds:/workspace/worlds:ro
+    entrypoint: /entrypoint.sh
+```
+
+### Dockerfile
+
+Основан на `ros:humble-ros-base-jammy`, включает:
+- Gazebo 11
+- ROS 2 Humble
+- TurtleBot3 пакеты
+- rosbridge_server
+
+### Entrypoint
+
+Скрипт запуска:
+1. Устанавливает переменные окружения
+2. Запускает Gazebo с TurtleBot3
+3. Запускает rosbridge_server
+
+---
+
+## Сетевые настройки
+
+### Host mode (по умолчанию)
+
+Контейнер использует сетевое пространство хоста:
+- rosbridge: localhost:9090
+- Gazebo Master: localhost:11345
+
+### Bridge mode (альтернатива)
+
+```yaml
+network_mode: bridge
+ports:
+  - "9090:9090"    # rosbridge WebSocket
+  - "11345:11345"  # Gazebo Master
+```
+
+---
+
+## Кастомизация
+
+### Добавление своего мира
+
+1. Создать файл мира в `configs/worlds/`
+2. Установить переменную окружения:
+   ```bash
+   export WORLD_NAME=my_custom_world
+   docker-compose up
+   ```
+
+### Использование другой модели робота
+
+```bash
+export TURTLEBOT3_MODEL=waffle
+docker-compose up
+```
+
+Доступные модели: `burger`, `waffle`, `waffle_pi`
+
+### Запуск без пересборки
+
+```bash
+docker-compose up --no-build
 ```
