@@ -18,3 +18,7 @@ class PPOConfig(BaseModel):
     ent_coef: float = Field(default=0.01, ge=0.0)
     vf_coef: float = Field(default=0.5, ge=0.0)
     max_grad_norm: float = Field(default=0.5, ge=0.0)
+
+    exploration_max_std: float = Field(default=0.1, ge=0.0)
+    exploration_min_std: float = Field(default=0.0, ge=0.0)
+    exploration_epochs: int = Field(default=100, ge=1)

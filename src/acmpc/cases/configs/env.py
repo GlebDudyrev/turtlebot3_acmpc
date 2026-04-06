@@ -56,6 +56,20 @@ class EnvConfig(BaseModel):
         description="Simulation timestep",
     )
 
+    @property
+    def observation_dim(self) -> int:
+        return 15
+
+    @property
+    def action_low(self) -> list[float]:
+        robot_params = RobotParamsRegistry.get(self.robot_name)
+        return [-robot_params.max_linear_vel, -robot_params.max_angular_vel]
+
+    @property
+    def action_high(self) -> list[float]:
+        robot_params = RobotParamsRegistry.get(self.robot_name)
+        return [robot_params.max_linear_vel, robot_params.max_angular_vel]
+
     @field_validator("world_name")
     @classmethod
     def check_world_name(cls, value: str) -> str:
@@ -71,7 +85,7 @@ class EnvConfig(BaseModel):
         if value not in RewardRegistry:
             available = RewardRegistry.list_available()
             raise ValueError(
-                f"Reward function '{value}' not found. " f"Available: {available}"
+                f"Reward function '{value}' not found. Available: {available}"
             )
         return value
 

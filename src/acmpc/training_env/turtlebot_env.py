@@ -251,6 +251,11 @@ class TurtleBotEnv(gym.Env):
 
         rho, phi, yaw = self._get_goal_info()
 
+        # Replace inf/nan with safe values
+        rho = float(rho) if rho != float("inf") and not (rho != rho) else 10.0
+        phi = float(phi) if not (phi != phi) else 0.0
+        yaw = float(yaw) if not (yaw != yaw) else 0.0
+
         observation = np.concatenate(
             [
                 lidar_processed,
@@ -260,6 +265,9 @@ class TurtleBotEnv(gym.Env):
             ],
             dtype=np.float32,
         )
+
+        # Final safety check - replace any remaining nan/inf
+        observation = np.nan_to_num(observation, nan=0.0, posinf=10.0, neginf=-10.0)
 
         return observation
 
