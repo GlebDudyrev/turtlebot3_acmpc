@@ -49,12 +49,18 @@ dev = [
     "bump-my-version>=1.0.0",
 ]
 
+[project.scripts]
+acmpc = "acmpc.scripts.train:main"
+
 [project.urls]
 Homepage = "https://github.com/GlebDudyrev/turtlebot3_acmpc"
 Repository = "https://github.com/GlebDudyrev/turtlebot3_acmpc"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-dir]
+acmpc = "src/acmpc"
 
 [tool.black]
 line-length = 88
