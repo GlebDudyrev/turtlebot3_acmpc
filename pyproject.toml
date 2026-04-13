@@ -50,7 +50,7 @@ dev = [
 ]
 
 [project.scripts]
-acmpc = "acmpc.scripts.train:main"
+acmpc = "acmpc.cli.train:main"
 
 [project.urls]
 Homepage = "https://github.com/GlebDudyrev/turtlebot3_acmpc"
