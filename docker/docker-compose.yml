@@ -22,5 +22,6 @@ services:
     
     volumes:
       - ../configs/worlds:/workspace/worlds:ro
+      - ../configs/launch:/workspace/launch:ro
     
     entrypoint: /entrypoint.sh

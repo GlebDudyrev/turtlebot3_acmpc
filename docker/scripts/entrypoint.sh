@@ -57,9 +57,13 @@ WORLD_PATH=$(find_world "${WORLD_NAME}") || {
 
 log_info "World path: ${WORLD_PATH}"
 
+cp $WORLD_PATH /opt/ros/humble/share/turtlebot3_gazebo/worlds/acmpc_world.world
+
+cp /workspace/launch/simulation.launch.py /opt/ros/humble/share/turtlebot3_gazebo/launch/simulation.launch.py
+
 log_info "Starting Gazebo simulation with TurtleBot3..."
 
-ros2 launch turtlebot3_gazebo turtlebot3_dqn_stage2.launch.py \
+ros2 launch turtlebot3_gazebo simulation.launch.py \
     world_file:="${WORLD_PATH}" \
     model:="${TURTLEBOT3_MODEL}" \
     use_sim_time:=true &
