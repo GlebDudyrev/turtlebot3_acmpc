@@ -35,6 +35,7 @@ dependencies = [
     "roslibpy>=1.4.0",
     "numpy>=1.24.0",
     "tensorboard>=2.14.0",
+    "typer>=0.24.1,<0.25",
 ]
 
 [project.optional-dependencies]
@@ -50,7 +51,7 @@ dev = [
 ]
 
 [project.scripts]
-acmpc = "acmpc.cli.train:main"
+acmpc = "acmpc.cli.app:app"
 
 [project.urls]
 Homepage = "https://github.com/GlebDudyrev/turtlebot3_acmpc"
